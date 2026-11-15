@@ -1,0 +1,58 @@
+{% extends "shop/base.html" %}
+{% block content %}
+
+<div class="container mt-5">
+
+    <h2 class="fw-bold mb-4">🛒 My Orders</h2>
+
+    <div class="card shadow-sm p-4">
+
+        {% for item in orders_data %}
+
+<div class="card mb-3 p-3 border-0 shadow-sm">
+
+    <div class="row align-items-center">
+
+        <div class="col-md-8">
+
+            <h5 class="fw-bold">Order #{{ item.order.id }}</h5>
+
+            <p>
+                <strong>User:</strong> {{ item.order.user.username }}
+            </p>
+
+            <p>
+                <strong>Date:</strong> {{ item.order.order_date }}
+            </p>
+
+            <p>
+                <strong>Total:</strong> ₹{{ item.order.total_amount }}
+            </p>
+
+            <p class="text-success fw-bold">
+                Seller Earn: ₹{{ item.seller_total|floatformat:2 }}
+            </p>
+
+        </div>
+
+        <div class="col-md-4 text-end">
+            <span class="badge bg-warning text-dark px-3 py-2">
+                {{ item.order.status }}
+            </span>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+        {% empty %}
+            <p>No orders found</p>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+body {
+    background: url("{% static 'images/login-bg.jpeg' %}") no-repeat center center;
+    background-size: cover;
+}
+</style>
+{% endblock %}
+
+<div style="margin-top: 120px;">
+<div class="container mt-5">
+<div class="row justify-content-center">
+<div class="col-md-6">
+
+    <div class="card shadow">
+
+<div class="card-header text-white"
+     style="background-color: var(--navbar-color);">
+    <h4 class="mb-0 text-center">Seller Registration</h4>
+</div>
+
+<div class="card-body">
+
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <input type="text" name="username" placeholder="Username"
+    pattern="[A-Za-z0-9]+" title="Only letters and numbers"
+    required class="form-control"><br>
+
+    <input type="email" name="email" placeholder="Email"
+    required class="form-control"><br>
+
+    <input type="password" name="password" placeholder="Password"
+    pattern="(?=.*[A-Z])(?=.*[0-9]).{6,}"
+    title="Min 6 chars, 1 uppercase, 1 number"
+    required class="form-control"><br>
+
+    <input type="text" name="phone" placeholder="Phone Number"
+    pattern="[0-9]{10}" maxlength="10"
+    title="Enter 10 digit number"
+    required class="form-control"><br>
+
+    <div class="mb-3">
+        <label>Upload ID Proof</label>
+        <input type="file" name="proof" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn w-100 text-white"
+style="background-color: var(--navbar-color);">
+        Register as Seller
+    </button>
+
+</form>
+</div>
+    
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+{% endblock %}

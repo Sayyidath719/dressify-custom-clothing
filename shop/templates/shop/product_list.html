@@ -1,0 +1,104 @@
+{% extends 'shop/base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+<style>
+body {
+    background: url("{% static 'images/home-bg.jpeg' %}") no-repeat center center fixed;
+    background-size: cover;
+}
+</style>
+{% endblock %}
+{% block content %}
+<div style="margin-top: 50px;">
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar with categories -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-custom text-white" style="background-color: var(--navbar-color);">
+                    <h5 class="mb-0">Categories</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'product_list' %}" class="list-group-item list-group-item-action {% if not request.GET.category %}active{% endif %}">
+                        All Products
+                    </a>
+                    {% for category in categories %}
+                    <a href="{% url 'product_list' %}?category={{ category.id }}" 
+                       class="list-group-item list-group-item-action {% if request.GET.category|add:'0' == category.id %}active{% endif %}">
+                        {{ category.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Products grid -->
+        <div class="col-md-9">
+            <!-- Search bar -->
+            <div class="row mb-4">
+                <div class="col-md-6 offset-md-6">
+                    <form method="get" class="d-flex">
+                        <input type="text" name="search" class="form-control me-2" placeholder="Search products..." value="{{ search_query }}">
+                        <button type="submit" class="btn btn-custom">Search</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Products -->
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                       {% if product.image %}
+    <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.name }}">
+{% else %}
+    <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center" style="height:220px;">
+        No Image
+    </div>
+{% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.description|truncatewords:10 }}</p>
+                            <p class="price">₹{{ product.base_price }}</p>
+                            <p style="font-size: 14px; color: gray;">
+    Sold by:
+    {% if product.seller %}
+        {{ product.seller.username }}
+    {% else %}
+        Admin
+    {% endif %}
+</p>
+                            {% if product.is_customizable %}
+                                <span class="badge bg-success mb-2">Customizable</span>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                                
+                                   <!-- Add plain product to cart -->
+                                <a href="{% url 'add_plain_to_cart' product.id %}" class="btn btn-primary btn-sm">
+                                Add to Cart
+                                 </a>
+                                 {% if product.is_customizable %}
+                                <a href="{% url 'customize_product' product.id %}" class="btn btn-custom btn-sm">Customize Now</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        No products found.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

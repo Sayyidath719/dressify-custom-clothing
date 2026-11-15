@@ -1,0 +1,160 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<div style="margin-top: 60px;">
+
+<style>
+
+
+ 
+
+/* ✅ Keep your background */
+body.about-page {
+    background: url("{% static 'images/about-bg.jpeg' %}") no-repeat center center !important;
+    background-size: cover !important;
+    background-color: transparent !important;
+}
+
+/* ✅ OVERRIDE ONLY FOR ABOUT PAGE */
+body.about-page .about-wrapper {
+    background: transparent !important;
+}
+
+
+/* OPTIONAL DARK OVERLAY (for premium look) */
+body.about-page::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.25);
+    z-index: -1;
+}
+/* ===== BACKGROUND ===== */
+body {
+    background: url("{% static 'images/about-bg.jpeg' %}") no-repeat center center !important;
+    background-size: cover !important   ;
+    position: relative;
+}
+
+/* DARK DEPTH (IMPORTANT 🔥) */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25); /* lighter than before */
+    z-index: -1;
+}
+
+/* ===== MAIN CARD ===== */
+.about-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 85vh;
+}
+
+.about-card-main {
+    background: rgba(255, 255, 255, 0.3);  /* 🔥 LESS WHITE */
+
+    backdrop-filter: blur(10px); /* reduce blur */
+    -webkit-backdrop-filter: blur(10px);
+
+    border-radius: 20px;
+    padding: 35px;
+
+    width: 850px;
+    max-width: 90%;
+
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+
+    text-align: center;
+}
+
+/* ===== TITLE ===== */
+.about-title {
+    color: #ff7a00;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* ===== DESCRIPTION ===== */
+.about-desc {
+    color: #222;
+    margin-bottom: 25px;
+}
+
+/* ===== GRID ===== */
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+/* ===== BOX ===== */
+.about-box {
+    background: rgba(255, 255, 255, 0.1) !important; /* 🔥 STRONGER THAN OUTER */
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    border-radius: 12px;
+    padding: 18px;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.about-box:hover {
+    transform: translateY(-5px);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .about-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>{% endblock %}
+
+{% block content %}
+
+<div class="about-wrapper">
+    <div class="about-card-main">
+
+        <h2 class="about-title">ℹ️ About Dressify</h2>
+
+        <p class="about-desc">
+            Dressify is a modern clothing platform that empowers you to create your own unique fashion.
+            Customize your outfits with text, designs, and creativity, and preview them before placing your order.
+        </p>
+
+        <div class="about-grid">
+
+            <div class="about-box">
+                <h5>🎨 Custom Design</h5>
+                <p>Create your own clothing with text, icons and creativity.</p>
+            </div>
+
+            <div class="about-box">
+                <h5>▶️ Live Preview</h5>
+                <p>See your design before ordering in real-time.</p>
+            </div>
+
+            <div class="about-box">
+                <h5>🛒 Easy Shopping</h5>
+                <p>Simple checkout and smooth experience.</p>
+            </div>
+
+            <div class="about-box">
+                <h5>🚚 Fast Delivery</h5>
+                <p>Quick and reliable delivery at your doorstep.</p>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+</div>
+
+{% endblock %}

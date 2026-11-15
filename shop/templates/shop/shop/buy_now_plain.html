@@ -1,0 +1,57 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header" style="background-color: #F28735; color: white;">
+                    <h4 class="mb-0">Buy Now - {{ product.name }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <img src="{{ product.image.url }}" class="img-fluid mb-3" style="max-height: 150px;">
+                        <h5>{{ product.name }}</h5>
+                        <p class="h4" style="color: #F28735;">₹{{ product.base_price }}</p>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Quantity:</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="shipping_address" class="form-label">Shipping Address:</label>
+                            <textarea class="form-control" id="shipping_address" name="shipping_address" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number:</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <p><strong>Total Amount:</strong> <span style="color: #F28735;">₹<span id="total">{{ product.base_price }}</span></span></p>
+                        </div>
+                        
+                        <button type="submit" class="btn w-100" style="background-color: #F28735; color: white;">
+                            ⚡ Place Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('quantity').addEventListener('input', function() {
+    const quantity = this.value;
+    const price = {{ product.base_price }};
+    document.getElementById('total').textContent = quantity * price;
+});
+</script>
+{% endblock %}

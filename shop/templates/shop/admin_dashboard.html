@@ -1,0 +1,173 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<div style="margin-top: 30px;">
+<style>
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    position: fixed;
+    background: linear-gradient(180deg, #F28735, #ff5722);
+    color: white;
+    padding: 20px;
+}
+
+.sidebar h4 {
+    margin-bottom: 20px;
+}
+
+.sidebar a {
+    display: block;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.sidebar a:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.main-content {
+    margin-left: 240px;
+    padding: 20px;
+    width: 100%;
+}
+</style>
+<div class="d-flex">
+
+    <!-- 🔴 SIDEBAR -->
+   <div class="sidebar">
+    <h4><i class="fas fa-tshirt"></i> Dressify</h4>
+
+    <a href="{% url 'admin_dashboard' %}">
+        <i class="fas fa-chart-line"></i> Dashboard
+    </a>
+
+    <a href="{% url 'admin_add_product' %}">
+        <i class="fas fa-box"></i> Add Product
+    </a>
+
+    <a href="{% url 'add_category' %}">
+        <i class="fas fa-tags"></i> Add Category
+    </a>
+
+    <a href="{% url 'all_orders' %}">
+        <i class="fas fa-shopping-cart"></i> Orders
+    </a>
+    <li class="nav-item">
+    <a href="{% url 'notifications' %}" class="nav-link">
+        <i class="fas fa-bell"></i> Notifications
+    </a>
+
+    <a href="{% url 'admin_payments' %}">
+    <i class="fas fa-money-bill"></i> Payments
+</a>
+
+    <a href="{% url 'manage_users' %}">
+        <i class="fas fa-users"></i> Users
+    </a>
+
+    <a href="{% url 'manage_sellers' %}">
+        <i class="fas fa-store"></i> Sellers
+    </a>
+    <a href="{% url 'admin_feedbacks' %}" class="nav-link">
+    <i class="fas fa-comments"></i> Feedback
+</a>
+</div>
+
+    <!-- 🟢 MAIN CONTENT -->
+    <div class="main-content">
+    <h2 style="color: #F28735;">Admin Dashboard</h2>
+    
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card color-card text-white" style="background: #F28735 !important;">
+                <div class="card-body">
+                    <h5 class="card-title">Total Orders</h5>
+                    <h2>{{ total_orders }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card color-card text-white" style="background: #28a745 !important;">
+                <div class="card-body">
+                    <h5 class="card-title">Total Products</h5>
+                    <h2>{{ total_products }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card color-card text-white" style="background: #17a2b8 !important;">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <h2>{{ total_users }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card color-card text-white" style="background: #ffc107 !important;">
+                <div class="card-body">
+                    <h5 class="card-title">Total Revenue</h5>
+                    <h2>₹{{ total_revenue }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="card">
+        <div class="card-header" style="background-color: #F28735; color: white;">
+            <h5 class="mb-0">Recent Orders</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.user.username }}</td>
+                            <td>{{ order.order_date|date:"M d, Y" }}</td>
+                            <td>₹{{ order.total_amount }}</td>
+                            <td>
+                                <span class="badge {% if order.status == 'delivered' %}bg-success{% elif order.status == 'cancelled' %}bg-danger{% else %}bg-warning{% endif %}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge {% if order.payment_status == 'completed' %}bg-success{% else %}bg-warning{% endif %}">
+                                    {{ order.payment_status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'manage_order' order.id %}" class="btn btn-sm btn-outline-primary">Manage</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">No orders yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}

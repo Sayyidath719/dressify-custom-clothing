@@ -1,0 +1,98 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'product_list' %}">Products</a></li>
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+
+        <!-- Product Image -->
+        <div class="col-md-6">
+            <img src="{{ product.image.url }}" 
+                 class="img-fluid rounded" 
+                 alt="{{ product.name }}" 
+                 style="max-height:500px;width:100%;object-fit:contain;">
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-md-6">
+
+            <h2 style="color:#F28735;">{{ product.name }}</h2>
+            <p class="text-muted">{{ product.description }}</p>
+
+            <div class="card mb-4">
+                <div class="card-header" style="background-color:#F28735;color:white;">
+                    <h5 class="mb-0">Price Options</h5>
+                </div>
+
+                <div class="card-body">
+
+                    <!-- Plain Product -->
+                    <div class="border p-3 mb-3 rounded" style="background:#f8f9fa;">
+                        <h6>📦 Plain T-Shirt</h6>
+
+                        <p class="h4" style="color:#F28735;">
+                            ₹{{ product.base_price }}
+                        </p>
+
+                        <p class="text-muted small">
+                            Buy without customization
+                        </p>
+
+                        <div class="d-flex gap-2">
+
+                            <a href="{% url 'add_plain_to_cart' product.id %}" 
+                               class="btn btn-primary">
+                               🛒 Add to Cart
+                            </a>
+
+                            <a href="{% url 'buy_now_plain' product.id %}" 
+                               class="btn btn-success">
+                               ⚡ Buy Now
+                            </a>
+
+                        </div>
+                    </div>
+
+
+                    <!-- Customized Product -->
+                    {% if product.is_customizable %}
+
+                    <div class="border p-3 rounded" style="background:#FBF4F0;">
+
+                        <h6>🎨 Customized T-Shirt</h6>
+
+                        <p class="h4" style="color:#F28735;">
+                            ₹{{ product.base_price|add:50 }}
+                        </p>
+
+                        <p class="text-muted small">
+                            Base Price ₹{{ product.base_price }} + Customization ₹50
+                        </p>
+
+                        <a href="{% url 'customize_product' product.id %}" 
+                           class="btn w-100"
+                           style="background:#F28735;color:white;">
+                           🎨 Customize & Buy (+₹50)
+                        </a>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <p><strong>Stock:</strong> {{ product.stock }} available</p>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

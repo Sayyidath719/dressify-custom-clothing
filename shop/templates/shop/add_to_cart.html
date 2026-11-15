@@ -1,0 +1,54 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card text-center">
+                <div class="card-header" style="background-color: #F28735; color: white;">
+                    <h4 class="mb-0">Add to Cart</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Product Image -->
+                    <img src="{{ customization.product.image.url }}" class="img-fluid mb-3" style="max-height: 200px;" alt="{{ customization.product.name }}">
+                    
+                    <h5>{{ customization.product.name }}</h5>
+                    
+                    <!-- Customization Summary -->
+                    <div class="text-start mt-3 p-3" style="background-color: #FBF4F0; border-radius: 10px;">
+                        <h6 style="color: #F28735;">Item Details:</h6>
+                        
+                        {% if customization.text %}
+                        <p><strong>Text:</strong> "{{ customization.text }}"</p>
+                        {% endif %}
+                        
+                        {% if customization.icon %}
+                        <p><strong>Icon:</strong> 
+                            <span style="font-size: 30px;">{{ customization.icon }}</span>
+                        </p>
+                        {% endif %}
+                        
+                        <p><strong>Price:</strong> <span style="color: #F28735;">₹{{ customization.product.base_price }}</span></p>
+                    </div>
+                    
+                    <form method="post" class="mt-3">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Quantity:</label>
+                            <input type="number" class="form-control text-center" id="quantity" name="quantity" value="1" min="1" max="{{ customization.product.stock }}" style="width: 100px; margin: 0 auto;">
+                        </div>
+                        
+                        <button type="submit" class="btn w-100" style="background-color: #F28735; color: white;">
+                            <i class="fas fa-check-circle"></i> Confirm Add to Cart
+                        </button>
+                    </form>
+                    
+                    <a href="{% url 'preview_design' customization.id %}" class="btn btn-outline-secondary w-100 mt-2">
+                        <i class="fas fa-eye"></i> Back to Preview
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<div style="margin-top: 50px;">
+<div class="container mt-4">
+
+    <h2 class="fw-bold mb-4" style="font-size: 32px;">
+    <i class="fas fa-comments me-2"></i> Customer Feedback
+</h2>
+
+    <div class="table-responsive">
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Rating</th>
+                    <th>Message</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for f in feedbacks %}
+                <tr>
+                    <td>{{ f.user.username }}</td>
+                    <td>⭐ {{ f.rating }}</td>
+                    <td>{{ f.message }}</td>
+                    <td>{{ f.created_at }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No feedback yet</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</div>
+{% endblock %}

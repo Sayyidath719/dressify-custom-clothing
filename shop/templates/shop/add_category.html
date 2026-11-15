@@ -1,0 +1,40 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<div style="margin-top: 50px;">
+
+<div class="d-flex">
+
+   
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content container mt-4">
+
+        <h2 class="mb-4">📂 Add Category</h2>
+
+        <div class="card p-4 shadow-sm">
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- Category Name -->
+                <div class="mb-3">
+                    <label class="form-label">Category Name</label>
+                    <input type="text" name="name" class="form-control" placeholder="Enter category name" required>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="btn btn-success w-100">
+                    ➕ Add Category
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+</div>
+
+{% endblock %}

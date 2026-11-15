@@ -1,0 +1,192 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block content %}
+<div style="padding: 20px; background: #FBF4F0; min-height: 100vh;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        
+        <nav style="margin-bottom: 20px;">
+            <ol style="list-style: none; padding: 0; display: flex; gap: 10px; background: white; padding: 10px 15px; border-radius: 5px;">
+                <li><a href="{% url 'home' %}" style="color: #F28735; text-decoration: none;">Home</a></li>
+                <li><span style="color: #999;">/</span></li>
+                <li><a href="{% url 'product_list' %}" style="color: #F28735; text-decoration: none;">Products</a></li>
+                <li><span style="color: #999;">/</span></li>
+                <li><a href="{% url 'product_detail' customization.product.id %}" style="color: #F28735; text-decoration: none;">{{ customization.product.name }}</a></li>
+                <li><span style="color: #999;">/</span></li>
+                <li style="color: #666;">Preview Design</li>
+            </ol>
+        </nav>
+        
+        <h2 style="color: #F28735; margin-bottom: 30px;">Preview Design</h2>
+        
+        <div style="display: flex; gap: 40px; flex-wrap: wrap;">
+            <!-- Left: Product Image Container -->
+            <div style="position: relative; width: 450px; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);" id="designArea">
+                
+                <!-- Product Image -->
+                <img src="{{ customization.product.image.url }}" 
+                     style="width: 100%; border-radius: 8px; display: block;" 
+                     alt="{{ customization.product.name }}">
+                
+                <!-- Drawing Layer -->
+                {% if drawing %}
+                <img src="{{ drawing }}" 
+                     style="position: absolute; top: 15px; left: 15px; width: calc(100% - 30px); height: calc(100% - 30px); pointer-events: none; z-index: 5; opacity: 0.8;">
+                {% endif %}
+                
+                <!-- Text - Clean version -->
+                {% if text %}
+                <div style="
+    position:absolute;
+    top: {{ text_y }}%;
+    left: {{ text_x }}%;
+    color: {{ text_color }};
+    font-size: {{ text_size }}px;
+    font-weight:bold;
+    z-index:10;
+    text-shadow:1px 1px 2px rgba(255,255,255,0.8);
+    white-space:nowrap;">
+    {{ text }}
+</div>
+                {% endif %}
+                
+                <!-- Icon - SINGLE ICON ONLY -->
+               {% if icon %}
+                <div style="
+                position:absolute;
+                top: {{ icon_y }}%;
+                left: {{ icon_x }}%;
+                font-size:60px;
+                z-index:10;
+                text-shadow:1px 1px 2px rgba(255,255,255,0.8);
+                line-height:1;">
+    {{ icon }}
+</div>
+{% endif %}
+            </div>
+            
+            <!-- Right: Info Panel -->
+            <div style="flex: 1; min-width: 300px; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h3 style="color: #F28735; margin-top: 0; margin-bottom: 20px;">Design Details</h3>
+                
+                <div style="background: #FBF4F0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <p style="margin: 5px 0;"><strong>Text:</strong> "{{ text }}"</p>
+                    <p style="margin: 5px 0;"><strong>Icon:</strong> <span style="font-size: 24px;">{{ icon }}</span></p>
+                    <p style="margin: 5px 0;"><strong>Drawing:</strong> {% if drawing %}✓ Added{% else %}No{% endif %}</p>
+                    <p style="margin: 5px 0;"><strong>Price:</strong> <span style="color: #F28735; font-size: 24px;">₹{{ customization.product.base_price }}</span></p>
+                </div>
+                
+                <!-- Position Info -->
+                <details style="margin-bottom: 20px; font-size: 12px; color: #666; cursor: pointer;">
+                    <summary style="color: #F28735; font-weight: bold;">Technical Details</summary>
+                    <div style="margin-top: 10px; padding: 10px; background: #f5f5f5; border-radius: 5px;">
+                        <p style="margin: 3px 0;"><strong>Text Position:</strong> {{ text_x }}px, {{ text_y }}px</p>
+                        <p style="margin: 3px 0;"><strong>Icon Position:</strong> {{ icon_x }}px, {{ icon_y }}px</p>
+                        <p style="margin: 3px 0;"><strong>Icon Value:</strong> "{{ icon }}"</p>
+                        <p style="margin: 3px 0;"><strong>Text Color:</strong> {{ text_color }}</p>
+                        <p style="margin: 3px 0;"><strong>Text Size:</strong> {{ text_size }}px</p>
+                    </div>
+                </details>
+                
+                <!-- Action Buttons -->
+                {% if mode == "seller" %}
+
+<!-- ✅ SELLER FLOW -->
+<a href="{% url 'save_custom_product' customization.id %}"
+   style="background:#28a745;color:white;padding:12px 25px;border-radius:5px;display:block;text-align:center;font-weight:bold;">
+    💾 Save Product to My Shop
+</a>
+
+{% else %}
+
+<!-- ✅ USER FLOW -->
+<div class="mt-4">
+
+    <!-- Add to Cart -->
+    <form id="cartForm" method="POST" action="{% url 'add_to_cart' customization.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="design_image" id="design_image">
+
+        <button type="button" onclick="saveDesignAndAddToCart()" class="btn btn-main w-100">
+            🛒 Add to Cart
+        </button>
+    </form>
+
+    <!-- Edit + Download -->
+    <div class="d-flex gap-2 mt-3">
+        
+       <!-- <a href="{% url 'customize_product' customization.product.id %}"
+           class="btn btn-secondary-custom w-50">
+            ✏️ Edit Design
+        </a>-->
+
+        <button onclick="downloadDesign()" class="btn btn-success-custom w-50">
+            ⬇️ Download
+        </button>
+
+    </div>
+
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script>
+function downloadDesign() {
+    const designArea = document.getElementById('designArea');
+    const btn = event.target;
+    const originalText = btn.innerText;
+    
+    btn.innerText = "⏳ Generating...";
+    btn.disabled = true;
+    
+    html2canvas(designArea, {
+        scale: 2,
+        backgroundColor: '#FFFFFF',
+        allowTaint: true,
+        useCORS: true
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'dressify-design-{{ customization.id }}.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }).catch(error => {
+        console.error('Download error:', error);
+        alert('Error downloading image. Please try again.');
+        btn.innerText = originalText;
+        btn.disabled = false;
+    });
+}
+
+// Debug
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Icon value:', "{{ icon }}");
+    console.log('Icon first char:', "{{ icon|first }}");
+});
+
+function saveDesignAndAddToCart() {
+
+    const designArea = document.getElementById('designArea');
+
+    html2canvas(designArea, {
+        scale:2,
+        backgroundColor:'#ffffff'
+    }).then(canvas => {
+
+        let imageData = canvas.toDataURL("image/png");
+
+        document.getElementById("design_image").value = imageData;
+
+        document.getElementById("cartForm").submit();
+
+    });
+
+}
+</script>
+{% endblock %}

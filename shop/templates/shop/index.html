@@ -1,0 +1,244 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+
+body {
+    background: url('/static/images/home-bg.jpeg') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.review-section {
+    position: relative;
+    padding:  30px 20px;
+    margin-bottom: 0;
+}
+
+.review-section .container {
+    position: relative;
+    z-index: 2;
+}
+ 
+
+.container {
+    margin-bottom: 0 !important;
+}
+
+.category-card {
+    height: 100%;
+    min-height: 260px;   /* 🔥 increase size */
+
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    border-radius: 20px;
+    padding: 15px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+.category-card:hover {
+    transform: translateY(-5px);
+}
+
+
+.category-card img {
+    height: 140px;   /* 🔥 increase */
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+/* GLASS CARD STYLE (same as About page) */
+.glass-box {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    padding: 25px;
+    transition: 0.3s;
+}
+
+.glass-box:hover {
+    transform: translateY(-5px);
+}
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+    <!-- Hero Section with your colors -->
+  <section class="hero-video">
+
+    <video autoplay muted loop playsinline class="bg-video">
+        <source src="{% static 'videos/hero.mp4' %}" type="video/mp4">
+    </video>
+
+    <div class="hero-content text-center">
+        <h1 class="display-4">Welcome to Dressify</h1>
+
+        <p class="lead">
+            Design clothes your way — add custom text and create your perfect outfit.
+        </p>
+
+        <a href="{% url 'product_list' %}" class="btn btn-custom btn-lg">
+            Customize Your Outfit
+        </a>
+    </div>
+
+</section>
+
+
+<div class="review-section">
+    <!-- Categories Section -->
+     <section class="category-section mt-0 pt-0">
+    {% if categories %}
+    <h2 class="text-center mb-4" style="color: black;" >Shop by Category</h2>
+    <div class="row g-2">
+        {% for category in categories %}
+        <div class="col-md-3 col-sm-4 col-6 mb-2">
+            <div class="card text-center h-100 category-card">
+                {% if category.image %}
+                <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px; background-color: #F28735 !important;">
+                    <i class="fas fa-tshirt fa-3x"></i>
+                </div>
+                {% endif %}
+                <div class="card-body p-1">
+                    <h6 class="card-title mb-1">{{ category.name }}</h5>
+                    <p class="card-text small mb-1">{{ category.description|truncatewords:10 }}</p>
+                    <a href="{% url 'product_list' %}?category={{ category.id }}" class="btn" style="background-color: #F28735; color: white;">View Products</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+  </section>
+    <!-- Featured Products -->
+     <div class="container py-5  featured-title">
+    <h2 class="text-center  mb-4" >Featured Products</h2>
+    <div class="row g-4  justify-content-center pb-5  mt-4">
+        {% for product in products %}
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
+                {% else %}
+                <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 250px; background-color: #F28735 !important;">
+                    <i class="fas fa-tshirt fa-3x"></i>
+                </div>
+                {% endif %}
+                
+
+
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">{{ product.description|truncatewords:10 }}</p>
+                    <p class="h5" style="color: #F28735; font-weight: bold;">₹{{ product.base_price }}</p>
+                    {% if product.is_customizable %}
+                        <span class="badge mb-2" style="background-color: #28a745;">Customizable</span>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                        {% if product.is_customizable %}
+                        <a href="{% url 'customize_product' product.id %}" class="btn btn-sm" style="background-color: #F28735; color: white;">Customize Now</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <div class="alert alert-info">
+                <p>No products available yet. <a href="{% url 'admin:index' %}">Add products in admin panel</a></p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Features Section -->
+     <h2 class="text-center why-title"> Why Choose Us</h2>
+    <div class="row py-5 mt-5 glass-box">
+        <div class="col-md-4 text-center">
+            <i class="fas fa-magic fa-3x" style="color: #F28735;"></i>
+            <h4 class="mt-3"> Customization</h4>
+            <p>Use our chatbot to customize your clothes naturally</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <i class="fas fa-tshirt fa-3x" style="color: #F28735;"></i>
+            <h4 class="mt-3">Quality Products</h4>
+            <p>Premium quality clothing for all your needs</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <i class="fas fa-truck fa-3x" style="color: #F28735;"></i>
+            <h4 class="mt-3">Fast Delivery</h4>
+            <p>Quick and reliable shipping to your doorstep</p>
+        </div>
+    </div>
+</div>
+
+<!-- FEEDBACK SECTION -->
+<div class="container py-5">
+
+{% if user.is_authenticated %}
+<div class="glass-box mx-auto mb-5" style="max-width: 500px; border-radius: 15px;">
+    
+    <h4 class="text-center mb-3">Leave Feedback</h4>
+
+    <form method="POST" action="{% url 'submit_feedback' %}">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label>Rating (1-5)</label>
+            <input type="number" name="rating" min="1" max="5" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <textarea name="message" class="form-control" rows="3"
+                      placeholder="Write your feedback..." required></textarea>
+        </div>
+
+        <button class="btn w-100 btn-custom">
+            Submit Feedback
+        </button>
+    </form>
+
+</div>
+{% endif %}
+
+<h2 class="text-center mb-4">Customer Feedback</h2>
+
+<div class="row g-4">
+
+{% for f in feedbacks %}
+<div class="col-md-4">
+    <div class="glass-box">
+
+        <div class="d-flex justify-content-between">
+            <strong>{{ f.user.username }}</strong>
+            <span style="color:#F28735;">⭐ {{ f.rating }}/5</span>
+        </div>
+
+        <p class="text-muted mt-2">"{{ f.message }}"</p>
+
+    </div>
+</div>
+{% empty %}
+<div class="text-center">
+    <p>No feedback yet</p>
+</div>
+{% endfor %}
+
+
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<h2>Browse Products</h2>
+
+<div class="row">
+{% for product in admin_products %}
+<div class="col-md-4 mb-3">
+    <div class="card p-3 h-100">
+        {% if product.image %}
+    <img src="{{ product.image.url }}" 
+         class="img-fluid mb-2"
+         style="height:220px; width:100%; object-fit:contain; background:#f8f9fa;">
+{% else %}
+    <p>No Image</p>
+{% endif %}
+
+        <h5>{{ product.name }}</h5>
+        <p>₹{{ product.base_price }}</p>
+
+        {% if product.id in seller_product_parent_ids %}
+            <button class="btn btn-secondary btn-sm mb-1" disabled>
+                Already Added
+            </button>
+        {% else %}
+            <a href="{% url 'add_to_seller' product.id %}"
+               class="btn btn-primary btn-sm mb-1">
+                Add to My Shop
+            </a>
+        {% endif %}
+
+        <a href="{% url 'customize_product' product.id %}?mode=seller"
+           class="btn btn-warning btn-sm">
+            Customize & Add
+        </a>
+
+    </div>
+</div>
+{% empty %}
+<p>No products available</p>
+{% endfor %}
+</div>
+
+</div>
+
+{% endblock %}

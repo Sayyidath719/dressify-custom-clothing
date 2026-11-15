@@ -1,0 +1,234 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 style="color: #F28735;">Checkout</h2>
+    
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-header" style="background-color: #F28735; color: white;">
+                    <h5 class="mb-0">Shipping Information</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="checkoutForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="payment_done" id="paymentDone" value="false">
+                        
+                       <div class="mb-3">
+
+<label class="form-label">Select Shipping Address *</label>
+
+<select class="form-control" name="address" required>
+
+{% for address in addresses %}
+
+<option value="{{ address.id }}">
+{{ address.name }} - {{ address.address_line }},
+{{ address.city }} - {{ address.pincode }}
+({{ address.phone }})
+</option>
+
+{% endfor %}
+
+</select>
+
+<a href="{% url 'add_address' %}?next=checkout" class="btn btn-outline-secondary btn-sm mt-2">
++ Add New Address
+</a>
+
+</div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Payment Method</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" id="cod" value="Cash on Delivery" checked onclick="toggleCard(false)">
+                                <label class="form-check-label" for="cod">
+                                    Cash on Delivery (COD)
+                                </label>
+                            </div>
+                            <div class="form-check">
+    <input class="form-check-input" type="radio" name="payment_method" id="card" value="Card" onclick="toggleCard(true)">
+    <label class="form-check-label" for="card">
+        Card Payment
+    </label>
+</div>
+                        </div>
+                        <!-- 💳 CARD PAYMENT UI -->
+<div id="cardBox" style="display:none;" class="card p-3 mt-3 shadow-sm">
+
+    <h5>💳 Enter Card Details</h5>
+
+    <!-- Fake Card Preview -->
+   <div style="
+    background: linear-gradient(135deg, #1e1e2f, #3a3a5f);
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    font-family: monospace;
+">
+
+    <div style="display:flex; justify-content:space-between;">
+        <span>💳 VISA</span>
+        <span>•••</span>
+    </div>
+
+    <h4 style="letter-spacing:3px; margin-top:20px;">
+        **** **** **** <span id="previewCard">----</span>
+    </h4>
+
+    <div style="display:flex; justify-content:space-between; margin-top:20px;">
+        <div>
+            <small>Card Holder</small><br>
+            USER NAME
+        </div>
+        <div>
+            <small>Expires</small><br>
+            <span id="previewExpiry">MM/YY</span>
+        </div>
+    </div>
+
+</div>
+
+    <input type="text" id="cardNumber" maxlength="4"
+class="form-control mb-2" placeholder="Last 4 digits">
+
+    <input type="text" id="expiry" class="form-control mb-2" placeholder="MM/YY">
+
+    <button type="button" class="btn btn-success" onclick="fakePayment()">
+        Pay Now
+    </button>
+
+    <p id="paymentStatus" class="mt-2 fw-bold"></p>
+
+</div>
+                        
+                        <button type="submit" class="btn w-100" style="background-color: #F28735; color: white;">
+                            Place Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header" style="background-color: #F28735; color: white;">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    {% for item in cart_items %}
+                    <div class="d-flex justify-content-between mb-2">
+                        <div>
+                            {{ item.product.name }} x{{ item.quantity }}
+                            {% if item.customization %}
+                            <br><small class="text-muted">Customized</small>
+                            {% endif %}
+                        </div>
+                        <span>₹{{ item.get_total }}</span>
+                    </div>
+                    {% endfor %}
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span>₹{{ total }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Shipping:</span>
+                        <span>Free</span>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between">
+                        <strong>Total:</strong>
+                        <strong style="color: #F28735; font-size: 1.5rem;">₹{{ total }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function toggleCard(show) {
+    document.getElementById("cardBox").style.display = show ? "block" : "none";
+}
+
+
+function fakePayment() {
+    let card = document.getElementById("cardNumber").value;
+    let expiry = document.getElementById("expiry").value;
+
+    // ✅ CARD VALIDATION
+if (!/^\d{4}$/.test(card)) {
+    showError("Card must be exactly 4 digits");
+    return;
+}
+
+if (expiry === "") {
+    showError("Enter expiry date");
+    return;
+}
+
+    // ✅ EXPIRY VALIDATION
+    let parts = expiry.split("/");
+   if (parts.length !== 2) {
+    showError("Invalid expiry format (MM/YY)");
+    return;
+}
+
+    let month = parseInt(parts[0]);
+    let year = parseInt("20" + parts[1]);
+
+    let today = new Date();
+    let currentMonth = today.getMonth() + 1;
+    let currentYear = today.getFullYear();
+
+    if (month < 1 || month > 12) {
+    showError("Invalid month");
+    return;
+}
+
+    if (year < currentYear || (year === currentYear && month < currentMonth)) {
+    showError("Card expired!");
+    return;
+}
+
+    document.getElementById("paymentStatus").innerHTML = "Processing payment...";
+
+    setTimeout(() => {
+        let box = document.getElementById("paymentStatus");
+box.innerHTML = "✅ Payment Successful! ₹ Debited";
+box.style.color = "green";
+document.getElementById("paymentDone").value = "true";
+
+        setTimeout(() => {
+            document.getElementById("checkoutForm").submit();
+        }, 1500);
+
+    }, 2000);
+}
+
+
+// Live preview
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("cardNumber").oninput = function() {
+        document.getElementById("previewCard").innerText = this.value;
+    }
+
+    document.getElementById("expiry").oninput = function() {
+        document.getElementById("previewExpiry").innerText = this.value;
+    }
+});
+
+function showError(msg) {
+    let box = document.getElementById("paymentStatus");
+    box.innerHTML = "❌ " + msg;
+    box.style.color = "red";
+}
+</script>
+{% endblock %}

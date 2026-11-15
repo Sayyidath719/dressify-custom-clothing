@@ -1,0 +1,103 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 style="color: #F28735;">Your Shopping Cart</h2>
+    
+    {% if cart_items %}
+    <div class="row">
+        <div class="col-md-8">
+            {% for item in cart_items %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <!-- Product Image -->
+                        <div class="col-md-2">
+                            {% if item.customization and item.customization.preview_image %}
+                            <img src="{{ item.customization.preview_image.url }}" class="img-fluid rounded" style="max-height: 80px;">
+                            {% elif item.product.image %}
+                            <img src="{{ item.product.image.url }}" class="img-fluid rounded" style="max-height: 80px;">
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Product Details -->
+                        <div class="col-md-4">
+                            <h5>{{ item.product.name }}</h5>
+                            {% if item.custom_text %}
+                                <span class="badge" style="background-color: #F28735; color: white;">Customized</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Plain</span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Price Details (LIKE YOUR FRIEND'S CODE) -->
+                        <div class="col-md-4">
+                            <p class="mb-0">Base Price: ₹{{ item.product.base_price }} × {{ item.quantity }}</p>
+                            
+                            {% if item.custom_text %}
+                            <p class="mb-0 text-success">Customization Fee: + ₹50</p>
+                            {% endif %}
+                            
+                            <p class="mb-0"><strong>Subtotal: ₹{{ item.subtotal }}</strong></p>
+                            
+                            <!-- Quantity Controls (like your friend's code) -->
+                            <div class="d-flex align-items-center mt-2">
+                                <a href="{% url 'decrease_quantity' item.id %}" class="btn btn-sm btn-outline-danger">-</a>
+                                <span class="mx-3 fw-bold">{{ item.quantity }}</span>
+                                <a href="{% url 'increase_quantity' item.id %}" class="btn btn-sm btn-outline-success">+</a>
+                            </div>
+                            
+                            <!-- Customization Details -->
+                            {% if item.custom_text %}
+                            <p class="mt-2 mb-0 small">Text: "{{ item.custom_text }}"</p>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Remove Button -->
+                        <div class="col-md-2 text-end">
+                            <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-danger btn-sm">Remove</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Order Summary -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" style="background-color: #F28735; color: white;">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    {% for item in cart_items %}
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>{{ item.product.name }} x{{ item.quantity }}</span>
+                        <span>₹{{ item.subtotal }}</span>
+                    </div>
+                    {% endfor %}
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <h5>Total:</h5>
+                        <h5 style="color: #F28735;">₹{{ total }}</h5>
+                    </div>
+                    <a href="{% url 'checkout' %}" class="btn w-100 mt-3" style="background-color: #F28735; color: white;">
+                        Proceed to Checkout
+                    </a>
+                    <a href="{% url 'product_list' %}" class="btn btn-outline-secondary w-100 mt-2">
+                        Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <h4 class="text-muted">Your cart is empty</h4>
+        <a href="{% url 'product_list' %}" class="btn mt-3" style="background-color: #F28735; color: white;">
+            Start Shopping
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

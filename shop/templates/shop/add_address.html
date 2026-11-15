@@ -1,0 +1,60 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+<h2>Add New Address</h2>
+
+<!-- 🔴 ADD THIS BLOCK -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<form method="POST">
+
+
+
+<form method="POST">
+{% csrf_token %}
+
+<div class="mb-3">
+<label>Name</label>
+<input type="text" name="name" class="form-control"
+       oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '')"
+       pattern="[A-Za-z ]+"
+       title="Only letters allowed"
+       required>
+</div>
+
+<div class="mb-3">
+<label>Phone</label>
+<input type="tel" name="phone" class="form-control" pattern="[0-9]{10}" maxlength="10" placeholder="Enter 10 digit phone number" required>
+</div>
+
+<div class="mb-3">
+<label>Address</label>
+<textarea name="address_line" class="form-control" required></textarea>
+</div>
+
+<div class="mb-3">
+<label>City</label>
+<input type="text" name="city" class="form-control" required>
+</div>
+
+<div class="mb-3">
+<label>Pincode</label>
+<input type="text" name="pincode" class="form-control" pattern="[0-9]{6}"  maxlength="6" placeholder="Enter pincode" required>
+</div>
+
+<button class="btn btn-custom">Save Address</button>
+
+</form>
+
+</div>
+
+{% endblock %}

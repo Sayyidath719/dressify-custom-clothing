@@ -1,0 +1,88 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<div style="margin-top: 50px;">
+<div class="container mt-4">
+    <h2 style="color: #F28735;">My Orders</h2>
+    
+    {% if orders %}
+    <div class="row">
+        {% for order in orders %}
+        <div class="col-md-12 mb-3">
+            <div class="card">
+                <div class="card-header" style="background-color: #F28735; color: white;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Order #{{ order.id }}</h5>
+                        <span>{{ order.order_date|date:"F d, Y" }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            {% for item in order.items.all %}
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong>{{ item.product.name }}</strong>
+                                    {% if item.customization %}
+                                    <br><small class="text-muted">Customized</small>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    x{{ item.quantity }} @ ₹{{ item.price }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4 border-start">
+                            <p><strong>Total:</strong> ₹{{ order.total_amount }}</p>
+                            <p><strong>Status:</strong> 
+                                <span class="badge {% if order.status == 'delivered' %}bg-success{% elif order.status == 'cancelled' %}bg-danger{% else %}bg-warning{% endif %}">
+                                    {{ order.status|title }}
+                                </span>
+                            </p>
+                            <p><strong>Payment:</strong> 
+    <span class="badge {% if order.payment_status == 'completed' %}bg-success{% else %}bg-warning{% endif %}">
+        {{ order.payment_status|title }}
+    </span>
+</p>
+
+<!-- 🔥 ADD THIS BLOCK -->
+{% if order.tracking_id %}
+    <p class="mt-2"><strong>Courier:</strong> {{ order.courier }}</p>
+    <p><strong>Tracking ID:</strong> {{ order.tracking_id }}</p>
+
+    {% if order.courier == "DTDC" %}
+        <a href="https://www.dtdc.in/tracking/shipment-tracking.asp?cnno={{ order.tracking_id }}" 
+           target="_blank" class="btn btn-sm btn-primary mb-2">
+            Track Order
+        </a>
+
+    {% elif order.courier == "India Post" %}
+        <a href="https://www.indiapost.gov.in/_layouts/15/dop.portal.tracking/trackconsignment.aspx?consignment={{ order.tracking_id }}" 
+           target="_blank" class="btn btn-sm btn-primary mb-2">
+            Track Order
+        </a>
+    {% endif %}
+{% endif %}
+<!-- 🔥 END -->
+
+<a href="{% url 'order_detail' order.id %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-box-open fa-5x" style="color: #F28735;"></i>
+        <h3 class="mt-3">No orders yet</h3>
+        <p class="text-muted">Looks like you haven't placed any orders.</p>
+        <a href="{% url 'product_list' %}" class="btn" style="background-color: #F28735; color: white;">
+            Start Shopping
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
